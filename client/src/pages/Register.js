@@ -25,6 +25,7 @@ const Register = () => {
     //   [e.target.name]: e.target.value,
     // }));
     setValues({ ...values, [e.target.name]: e.target.value });
+    console.log(values);
   };
   const onSubmit = (e) => {
     e.preventDefault();
@@ -45,20 +46,20 @@ const Register = () => {
         {!values.isMember && (
           <FormRow
             type="text"
-            name="Name"
+            name="name"
             value={values.name}
             handleChange={handleChange}
           />
         )}
         <FormRow
           type="email"
-          name="Email"
+          name="email"
           value={values.email}
           handleChange={handleChange}
         />
         <FormRow
           type="password"
-          name="Password"
+          name="password"
           value={values.password}
           handleChange={handleChange}
         />
