@@ -11,7 +11,7 @@ const initialState = {
 };
 const Register = () => {
   const [values, setValues] = useState(initialState);
-  const { showAlert, isLoading } = useAppContext();
+  const { showAlert, isLoading, displayAlert } = useAppContext();
   const toggleMember = () => {
     setValues((prev) => ({
       ...prev,
@@ -20,14 +20,21 @@ const Register = () => {
   };
   const handleChange = (e) => {
     console.log(e.target.value);
-    setValues((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    // setValues((prev) => ({
+    //   ...prev,
+    //   [e.target.name]: e.target.value,
+    // }));
+    setValues({ ...values, [e.target.name]: e.target.value });
   };
   const onSubmit = (e) => {
     e.preventDefault();
     console.log(e.target);
+    const { name, email, password, isMember } = values;
+    if (!email || !password || (!isMember && !name)) {
+      displayAlert();
+      return;
+    }
+    console.log(values);
   };
   return (
     <Wrapper className="full-page">
