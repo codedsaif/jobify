@@ -20,11 +20,11 @@ const Register = () => {
   };
   const handleChange = (e) => {
     console.log(e.target.value);
-    // setValues((prev) => ({
-    //   ...prev,
-    //   [e.target.name]: e.target.value,
-    // }));
-    setValues({ ...values, [e.target.name]: e.target.value });
+    setValues((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+    // setValues({ ...values, [e.target.name]: e.target.value });
     console.log(values);
   };
   const onSubmit = (e) => {
