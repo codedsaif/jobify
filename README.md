@@ -645,3 +645,42 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server is listening on port ${port}...`));
 ```
+
+#### Not Found Middleware
+
+- in the root create <b>middleware</b> folder
+- not-found.js
+- setup function
+- return 404 with message 'Route does not exist'
+- import in server.js
+- make sure to use .js extension
+- place after home route
+
+#### Error Middleware
+
+- in the middleware create error-handler.js
+- setup function
+- accept 4 parameters, first one error
+- log error
+- return 500
+- json({msg:'there was an error'})
+- import in the server.js
+- make sure to use .js extension
+- place it last
+- eventually handle Mongoose Errors, just like in the node-express
+- showcase with async errors
+
+#### ENV Variables
+
+```sh
+npm install dotenv
+```
+
+- import dotenv from 'dotenv'
+- dotenv.config()
+
+- create .env
+- PORT=4000
+- .gitignore
+- /node_modules
+- .env
