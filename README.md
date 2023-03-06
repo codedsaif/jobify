@@ -684,3 +684,22 @@ npm install dotenv
 - .gitignore
 - /node_modules
 - .env
+
+#### Connect to MongoDB
+
+- switched back to PORT=5000
+- remove Error from '/'
+
+- existing MongoDB Atlas Account
+
+```sh
+npm install mongoose
+```
+
+- create <b>db</b> folder
+- create connect.js
+- setup connectDB(url)
+- in server.js create start() function
+- get connection string
+- setup as MONGO_URL in .env
+- provide credentials and DB Name

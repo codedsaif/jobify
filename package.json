@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/S-a-i-f-A-l-i/jobify#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.21"
