@@ -703,3 +703,70 @@ npm install mongoose
 - get connection string
 - setup as MONGO_URL in .env
 - provide credentials and DB Name
+
+#### Auth Controller and Route Structure
+
+- create <b>controllers</b>
+- authController.js
+- create async functions
+
+```js
+export { register, login, updateUser };
+```
+
+- return res.send('function name')
+- create <b>routes</b> folder
+- authRoutes.js
+- setup express router
+- import functions from authController.js
+
+```js
+router.route("/register").post(register);
+router.route("/login").post(login);
+router.route("/updateUser").patch(updateUser);
+
+export default router;
+```
+
+- import authRouter in server.js
+
+```js
+app.use("/api/v1/auth", authRouter);
+```
+
+#### Jobs Controller and Route Structure
+
+- jobsController.js
+- create async functions
+
+```js
+export { createJob, deleteJob, getAllJobs, updateJob, showStats };
+```
+
+- return res.send('function name')
+
+- jobsRoutes.js
+- setup express router
+- import functions from jobsController.js
+
+```js
+router.route("/").post(createJob).get(getAllJobs);
+// place before :id
+router.route("/stats").get(showStats);
+router.route("/:id").delete(deleteJob).patch(updateJob);
+
+export default router;
+```
+
+- in server.js jobsRouter
+
+```js
+app.use("/api/v1/jobs", jobsRouter);
+```
+
+#### Postman
+
+- URL global var
+- JOBIFY Collection
+- auth and jobs folders
+- setup routes
