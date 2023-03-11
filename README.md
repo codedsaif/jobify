@@ -796,3 +796,59 @@ npm install validator
 
 - import in User.js
 - validator.isEmail
+
+#### Register User - Initial Setup
+
+- authController
+- import User model
+- setup temporary try/catch
+- await User.create(req.body)
+- if success 201 with json({user}) (temp)
+- if error 500 with json({msg:'there was an error'})
+
+#### Pass Error to Error Handler
+
+- next(error)
+
+#### Express-Async-Errors Package
+
+- remove try/catch
+- [Express-Async-Errors](https://www.npmjs.com/package/express-async-errors)
+
+```sh
+npm install express-async-errors
+
+```
+
+- in server.js
+- import 'express-async-errors'
+
+- use throw Error('error') instead of next(error)
+
+#### Http Status Codes
+
+- constants for status codes
+- personal preference
+- provides consistency
+- less bugs
+- easier to read/manage
+
+- [Http Status Codes](https://www.npmjs.com/package/http-status-codes)
+
+```sh
+npm install http-status-codes
+```
+
+- import/setup in authController and error-handler
+- setup defaultError
+
+#### Custom Errors
+
+#### Refactor Errors
+
+- create errors folder
+- create custom-api, bad-request, not-found, index.js files
+- add proper imports
+- setup index.js just like in the front-end
+- import {BadRequestError} in authController
+- gotcha "errors/index.js"
