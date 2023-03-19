@@ -11,7 +11,7 @@ const initialState = {
 };
 const Register = () => {
   const [values, setValues] = useState(initialState);
-  const { showAlert, isLoading, displayAlert } = useAppContext();
+  const { showAlert, isLoading, displayAlert, registerUser } = useAppContext();
   const toggleMember = () => {
     setValues((prev) => ({
       ...prev,
@@ -19,23 +19,29 @@ const Register = () => {
     }));
   };
   const handleChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setValues((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
     // setValues({ ...values, [e.target.name]: e.target.value });
-    console.log(values);
+    // console.log(values);
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(e.target);
+    // console.log(e.target);
     const { name, email, password, isMember } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
       return;
     }
-    console.log(values);
+    const currentUser = { name, email, password };
+    if (isMember) {
+      console.log("already a member");
+    } else {
+      registerUser(currentUser);
+    }
+    // console.log(values);
   };
   return (
     <Wrapper className="full-page">
@@ -75,7 +81,7 @@ const Register = () => {
             className="form-input"
           />
         </div> */}
-        <button type="submit" className="btn btn-block">
+        <button type="submit" className="btn btn-block" disabled={isLoading}>
           Submit
         </button>
         <p>
