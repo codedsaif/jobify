@@ -1236,3 +1236,155 @@ const initialState = {
   jobLocation: userLocation || "",
 };
 ```
+
+#### Morgan Package
+
+- http logger middleware for node.js
+- [morgan docs](https://www.npmjs.com/package/morgan)
+
+```sh
+npm install morgan
+```
+
+```js
+import morgan from "morgan";
+
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
+```
+
+#### UnauthenticatedError
+
+- unauthenticated.js in errors
+- import/export
+
+```js
+import { StatusCodes } from "http-status-codes";
+import CustomAPIError from "./custom-api.js";
+
+class UnauthenticatedError extends CustomAPIError {
+  constructor(message) {
+    super(message);
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+  }
+}
+```
+
+#### Compare Password
+
+```js
+User.js in models;
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+```
+
+```js
+authController.js;
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new BadRequestError("Please provide all values");
+  }
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new UnauthenticatedError("Invalid Credentials");
+  }
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) {
+    throw new UnauthenticatedError("Invalid Credentials");
+  }
+  const token = user.createJWT();
+  user.password = undefined;
+  res.status(StatusCodes.OK).json({ user, token, location: user.location });
+};
+```
+
+- test in Postman
+
+#### Login User - Setup
+
+- actions.js LOGIN_USER_BEGIN,SUCCESS,ERROR
+- import reducer,appContext
+
+```js
+appContext.js;
+const loginUser = async (currentUser) => {
+  console.log(currentUser);
+};
+```
+
+- import in Register.js
+
+```js
+Register.js;
+
+if (isMember) {
+  loginUser(currentUser);
+} else {
+  registerUser(currentUser);
+}
+```
+
+#### Login User - Complete
+
+```js
+appContext.js;
+const loginUser = async (currentUser) => {
+  dispatch({ type: LOGIN_USER_BEGIN });
+  try {
+    const { data } = await axios.post("/api/v1/auth/login", currentUser);
+    const { user, token, location } = data;
+
+    dispatch({
+      type: LOGIN_USER_SUCCESS,
+      payload: { user, token, location },
+    });
+
+    addUserToLocalStorage({ user, token, location });
+  } catch (error) {
+    dispatch({
+      type: LOGIN_USER_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === LOGIN_USER_BEGIN) {
+  return {
+    ...state,
+    isLoading: true,
+  };
+}
+if (action.type === LOGIN_USER_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    user: action.payload.user,
+    token: action.payload.token,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+    showAlert: true,
+    alertType: "success",
+    alertText: "Login Successful! Redirecting...",
+  };
+}
+if (action.type === LOGIN_USER_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: "danger",
+    alertText: action.payload.msg,
+  };
+}
+```
