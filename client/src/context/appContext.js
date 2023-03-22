@@ -13,6 +13,8 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
+  TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -28,6 +30,7 @@ const initialState = {
   token: token,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
+  showSidebar: false,
 };
 
 const AppContext = React.createContext();
@@ -56,7 +59,7 @@ const AppProvider = (props) => {
     localStorage.removeItem("token");
     localStorage.removeItem("location");
   };
-
+  /*
   // const registerUser = async (currentUser) => {
   //   // console.log(currentUser);
   //   dispatch({ type: REGISTER_USER_BEGIN });
@@ -109,6 +112,8 @@ const AppProvider = (props) => {
   //   }
   //   clearAlert();
   // };
+*/
+  //User Login & Signup
   const setupUser = async ({ currentUser, endPoint, alertText }) => {
     console.log(currentUser);
     dispatch({ type: SETUP_USER_BEGIN });
@@ -138,9 +143,20 @@ const AppProvider = (props) => {
     }
     clearAlert();
   };
+  // Logout User
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER });
+    removeUserToLocalStorage();
+  };
 
+  // Toggle Sidebar
+  const toggleSidebar = () => {
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
   return (
-    <AppContext.Provider value={{ ...state, displayAlert, setupUser }}>
+    <AppContext.Provider
+      value={{ ...state, displayAlert, setupUser, toggleSidebar, logoutUser }}
+    >
       {props.children}
     </AppContext.Provider>
   );

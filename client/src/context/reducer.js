@@ -10,7 +10,11 @@ import {
   SETUP_USER_BEGIN,
   SETUP_USER_SUCCESS,
   SETUP_USER_ERROR,
+  TOGGLE_SIDEBAR,
+  LOGOUT_USER,
 } from "./actions";
+import { initialState } from "./appContext";
+
 const reducer = (state, action) => {
   if (action.type === DISPLAY_ALERT) {
     return {
@@ -28,6 +32,7 @@ const reducer = (state, action) => {
       alertText: "",
     };
   }
+  /*
   // if (action.type === REGISTER_USER_BEGIN) {
   //   return {
   //     ...state,
@@ -83,6 +88,7 @@ const reducer = (state, action) => {
   //     alertText: action.payload.msg,
   //   };
   // }
+  */
   if (action.type === SETUP_USER_BEGIN) {
     return {
       ...state,
@@ -108,6 +114,21 @@ const reducer = (state, action) => {
       showAlert: true,
       alertType: "danger",
       alertText: action.payload.msg,
+    };
+  }
+  if (action.type === LOGOUT_USER) {
+    return {
+      ...initialState,
+      user: null,
+      token: null,
+      userLocation: "",
+      jobLocation: "",
+    };
+  }
+  if (action.type === TOGGLE_SIDEBAR) {
+    return {
+      ...state,
+      showSidebar: !state.showSidebar,
     };
   }
   throw new Error(`no such action : ${action.type}`);
