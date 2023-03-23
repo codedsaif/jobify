@@ -2307,3 +2307,204 @@ const Profile = () => {
 
 export default Profile;
 ```
+
+#### Bearer Token - Manual Approach
+
+```js
+appContext.js;
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await axios.patch("/api/v1/auth/updateUser", currentUser, {
+      headers: {
+        Authorization: `Bearer ${state.token}`,
+      },
+    });
+    console.log(data);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Global Setup
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+axios.defaults.headers["Authorization"] = `Bearer ${state.token}`;
+```
+
+#### Axios - Setup Instance
+
+```js
+AppContext.js;
+
+const authFetch = axios.create({
+  baseURL: "/api/v1",
+  headers: {
+    Authorization: `Bearer ${state.token}`,
+  },
+});
+
+const updaterUser = async (currentUser) => {
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+  } catch (error) {
+    console.log(error.response);
+  }
+};
+```
+
+#### Axios - Interceptors
+
+- will use instance, but can use axios instead
+
+<!-- IMPORTANT  -->
+
+In current axios version,
+common property returns undefined,
+so we don't use it anymore!!!
+
+```js
+appContext.js;
+
+// response interceptor
+authFetch.interceptors.request.use(
+  (config) => {
+    config.headers["Authorization"] = `Bearer ${state.token}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+// response interceptor
+authFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.log(error.response);
+    if (error.response.status === 401) {
+      console.log("AUTH ERROR");
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+#### Update User
+
+```js
+actions.js;
+export const UPDATE_USER_BEGIN = "UPDATE_USER_BEGIN";
+export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS";
+export const UPDATE_USER_ERROR = "UPDATE_USER_ERROR";
+```
+
+```js
+appContext.js;
+
+const updateUser = async (currentUser) => {
+  dispatch({ type: UPDATE_USER_BEGIN });
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+
+    // no token
+    const { user, location, token } = data;
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: { user, location, token },
+    });
+
+    addUserToLocalStorage({ user, location, token });
+  } catch (error) {
+    dispatch({
+      type: UPDATE_USER_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js
+if (action.type === UPDATE_USER_BEGIN) {
+  return { ...state, isLoading: true }
+}
+
+if (action.type === UPDATE_USER_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    token:action.payload.token
+    user: action.payload.user,
+    userLocation: action.payload.location,
+    jobLocation: action.payload.location,
+    showAlert: true,
+    alertType: 'success',
+    alertText: 'User Profile Updated!',
+  }
+}
+if (action.type === UPDATE_USER_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: 'danger',
+    alertText: action.payload.msg,
+  }
+}
+```
+
+#### 401 Error - Logout User
+
+```js
+appContext.js;
+// response interceptor
+authFetch.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      logoutUser();
+    }
+    return Promise.reject(error);
+  }
+);
+
+const updateUser = async (currentUser) => {
+  dispatch({ type: UPDATE_USER_BEGIN });
+  try {
+    const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+
+    // no token
+    const { user, location } = data;
+
+    dispatch({
+      type: UPDATE_USER_SUCCESS,
+      payload: { user, location, token },
+    });
+
+    addUserToLocalStorage({ user, location, token: initialState.token });
+  } catch (error) {
+    if (error.response.status !== 401) {
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      });
+    }
+  }
+  clearAlert();
+};
+```

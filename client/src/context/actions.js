@@ -17,5 +17,10 @@ export const SETUP_USER_ERROR = "SETUP_USER_ERROR";
 // Logout User
 export const LOGOUT_USER = "LOGOUT_USER";
 
+// Update User
+export const UPDATE_USER_BEGIN = "UPDATE_USER_BEGIN";
+export const UPDATE_USER_SUCCESS = "UPDATE_USER_SUCCESS";
+export const UPDATE_USER_ERROR = "UPDATE_USER_ERROR";
+
 // Sidebar Toggle
 export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
