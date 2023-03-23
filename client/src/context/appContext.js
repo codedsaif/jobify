@@ -153,9 +153,19 @@ const AppProvider = (props) => {
   const toggleSidebar = () => {
     dispatch({ type: TOGGLE_SIDEBAR });
   };
+  const updateUser = async (currentUser) => {
+    console.log(currentUser);
+  };
   return (
     <AppContext.Provider
-      value={{ ...state, displayAlert, setupUser, toggleSidebar, logoutUser }}
+      value={{
+        ...state,
+        displayAlert,
+        setupUser,
+        toggleSidebar,
+        logoutUser,
+        updateUser,
+      }}
     >
       {props.children}
     </AppContext.Provider>
