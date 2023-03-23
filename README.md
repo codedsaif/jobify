@@ -2175,3 +2175,51 @@ const auth = async (req, res, next) => {
 
 export default auth;
 ```
+
+#### Update User
+
+```js
+const updateUser = async (req, res) => {
+  const { email, name, lastName, location } = req.body;
+  if (!email || !name || !lastName || !location) {
+    throw new BadRequestError("Please provide all values");
+  }
+
+  const user = await User.findOne({ _id: req.user.userId });
+
+  user.email = email;
+  user.name = name;
+  user.lastName = lastName;
+  user.location = location;
+
+  await user.save();
+
+  // various setups
+  // in this case only id
+  // if other properties included, must re-generate
+
+  const token = user.createJWT();
+  res.status(StatusCodes.OK).json({
+    user,
+    token,
+    location: user.location,
+  });
+};
+```
+
+#### Modified Paths
+
+- user.save() vs User.findOneAndUpdate
+
+```js
+User.js;
+
+UserSchema.pre("save", async function () {
+  console.log(this.modifiedPaths());
+  console.log(this.isModified("name"));
+
+  // if (!this.isModified('password')) return
+  // const salt = await bcrypt.genSalt(10)
+  // this.password = await bcrypt.hash(this.password, salt)
+});
+```
