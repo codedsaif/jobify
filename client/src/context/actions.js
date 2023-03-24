@@ -24,3 +24,13 @@ export const UPDATE_USER_ERROR = "UPDATE_USER_ERROR";
 
 // Sidebar Toggle
 export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
+
+// handle Change
+export const HANDLE_CHANGE = "HANDLE_CHANGE";
+// clear values
+export const CLEAR_VALUES = "CLEAR_VALUES";
+
+// create jobs
+export const CREATE_JOB_BEGIN = "CREATE_JOB_BEGIN";
+export const CREATE_JOB_SUCCESS = "CREATE_JOB_SUCCESS";
+export const CREATE_JOB_ERROR = "CREATE_JOB_ERROR";
