@@ -26,7 +26,6 @@ const AddJob = () => {
       displayAlert();
       return;
     }
-    console.log("create job");
     if (isEditing) {
       return;
     }
@@ -36,7 +35,6 @@ const AddJob = () => {
     const name = e.target.name;
     const value = e.target.value;
     handleChange({ name, value });
-    console.log(`${name}:${value}`);
   };
   return (
     <Wrapper>
