@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useContext } from "react";
+import React, { useReducer, useContext, useEffect } from "react";
 import reducer from "./reducer";
 import axios from "axios";
 import {
@@ -23,6 +23,8 @@ import {
   CREATE_JOB_BEGIN,
   CREATE_JOB_SUCCESS,
   CREATE_JOB_ERROR,
+  GET_JOBS_BEGIN,
+  GET_JOBS_SUCCESS,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -48,12 +50,41 @@ const initialState = {
   jobType: "full-time",
   statusOptions: ["pending", "interview", "declined"],
   status: "pending",
+  // getJobs
+  jobs: [],
+  totalJobs: 0,
+  numOfPages: 1,
+  page: 1,
 };
 
 const AppContext = React.createContext();
 
 const AppProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  // getJobs
+  const getJobs = async () => {
+    let url = `/jobs`;
+    dispatch({
+      type: GET_JOBS_BEGIN,
+    });
+    try {
+      const { data } = await authFetch(url);
+      console.log(data);
+      const { jobs, totalJobs, numOfPages } = data;
+      dispatch({
+        type: GET_JOBS_SUCCESS,
+        payload: {
+          jobs,
+          totalJobs,
+          numOfPages,
+        },
+      });
+    } catch (error) {
+      console.log(error.response);
+      logoutUser();
+    }
+    clearAlert();
+  };
 
   // axios.defaults.headers["Authorization"] = `Bearer ${state.token}`;
   const authFetch = axios.create({
@@ -267,6 +298,17 @@ const AppProvider = (props) => {
     }
     clearAlert();
   };
+  // edit Id
+  const setEditJob = (id) => {
+    console.log(`set edit job : ${id}`);
+  };
+  // delete job
+  const deleteJob = (id) => {
+    console.log(`delete : ${id}`);
+  };
+  // useEffect(() => {
+  // getJobs();
+  // }, []);
   return (
     <AppContext.Provider
       value={{
@@ -279,6 +321,9 @@ const AppProvider = (props) => {
         handleChange,
         clearValues,
         createJob,
+        getJobs,
+        setEditJob,
+        deleteJob,
       }}
     >
       {props.children}
