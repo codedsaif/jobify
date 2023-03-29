@@ -5,7 +5,7 @@ import {
   NotFoundError,
   UnauthenticatedError,
 } from "../errors/index.js";
-import checkPermission from "../utils/checkPermission.js";
+import checkPermissions from "../utils/checkPermissions.js";
 
 const createJob = async (req, res) => {
   const { position, company } = req.body;
@@ -17,7 +17,14 @@ const createJob = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ job });
 };
 const deleteJob = async (req, res) => {
-  res.send("job deleted");
+  const { id: jobId } = req.params;
+  const job = await Job.findOne({ _id: jobId });
+  if (!job) {
+    throw new NotFoundError(`No job with id :${jobId}`);
+  }
+  checkPermissions(req.user, job.createdBy);
+  await job.deleteOne();
+  res.status(StatusCodes.OK).json({ msg: "Success! Job removed" });
 };
 const getAllJobs = async (req, res) => {
   const jobs = await Job.find({ createdBy: req.user.userId });
@@ -36,9 +43,7 @@ const updateJob = async (req, res) => {
     throw new NotFoundError(`No job with id ${jobId}`);
   }
   // checking permissions
-  // console.log(typeof req.user.userId, req.user.userId);
-  // console.log(typeof job.createdBy, job.createdBy);
-  checkPermission(req.user, job.createdBy);
+  checkPermissions(req.user, job.createdBy);
   const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, req.body, {
     new: true,
     runValidators: true,
