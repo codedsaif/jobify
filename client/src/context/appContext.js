@@ -26,6 +26,7 @@ import {
   GET_JOBS_BEGIN,
   GET_JOBS_SUCCESS,
   SET_EDIT_JOB,
+  DELETE_JOB_BEGIN,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -309,8 +310,15 @@ const AppProvider = (props) => {
   };
 
   // delete job
-  const deleteJob = (id) => {
-    console.log(`delete : ${id}`);
+  const deleteJob = async (jobId) => {
+    // console.log(`delete : ${id}`);
+    dispatch({ type: DELETE_JOB_BEGIN });
+    try {
+      await authFetch.delete(`/jobs/${jobId}`);
+      getJobs();
+    } catch (error) {
+      logoutUser();
+    }
   };
   // useEffect(() => {
   // getJobs();
