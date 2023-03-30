@@ -3489,3 +3489,67 @@ if (action.type === DELETE_JOB_BEGIN) {
   return { ...state, isLoading: true };
 }
 ```
+
+#### Edit Job - Front-End
+
+```js
+actions.js;
+export const EDIT_JOB_BEGIN = "EDIT_JOB_BEGIN";
+export const EDIT_JOB_SUCCESS = "EDIT_JOB_SUCCESS";
+export const EDIT_JOB_ERROR = "EDIT_JOB_ERROR";
+```
+
+```js
+appContext.js;
+const editJob = async () => {
+  dispatch({ type: EDIT_JOB_BEGIN });
+  try {
+    const { position, company, jobLocation, jobType, status } = state;
+
+    await authFetch.patch(`/jobs/${state.editJobId}`, {
+      company,
+      position,
+      jobLocation,
+      jobType,
+      status,
+    });
+    dispatch({
+      type: EDIT_JOB_SUCCESS,
+    });
+    dispatch({ type: CLEAR_VALUES });
+  } catch (error) {
+    if (error.response.status === 401) return;
+    dispatch({
+      type: EDIT_JOB_ERROR,
+      payload: { msg: error.response.data.msg },
+    });
+  }
+  clearAlert();
+};
+```
+
+```js
+reducer.js;
+
+if (action.type === EDIT_JOB_BEGIN) {
+  return { ...state, isLoading: true };
+}
+if (action.type === EDIT_JOB_SUCCESS) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: "success",
+    alertText: "Job Updated!",
+  };
+}
+if (action.type === EDIT_JOB_ERROR) {
+  return {
+    ...state,
+    isLoading: false,
+    showAlert: true,
+    alertType: "danger",
+    alertText: action.payload.msg,
+  };
+}
+```
