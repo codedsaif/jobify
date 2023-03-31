@@ -3593,3 +3593,74 @@ const start = async () => {
 
 start();
 ```
+
+#### Show Stats - Structure
+
+- aggregation pipeline
+- step by step
+- [Aggregation Pipeline](https://docs.mongodb.com/manual/core/aggregation-pipeline/)
+
+```js
+jobsController.js;
+
+import mongoose from "mongoose";
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+
+  res.status(StatusCodes.OK).json({ stats });
+};
+```
+
+#### Show Stats - Object Setup
+
+- [Reduce Basics](https://youtu.be/3WkW9nrS2mw)
+- [Reduce Object Example ](https://youtu.be/5BFkp8JjLEY)
+
+```js
+jobsController.js;
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+
+  stats = stats.reduce((acc, curr) => {
+    const { _id: title, count } = curr;
+    acc[title] = count;
+    return acc;
+  }, {});
+
+  res.status(StatusCodes.OK).json({ stats });
+};
+```
+
+#### Show Stats - Default Stats
+
+```js
+jobsController.js;
+
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+  stats = stats.reduce((acc, curr) => {
+    const { _id: title, count } = curr;
+    acc[title] = count;
+    return acc;
+  }, {});
+
+  const defaultStats = {
+    pending: stats.pending || 0,
+    interview: stats.interview || 0,
+    declined: stats.declined || 0,
+  };
+  let monthlyApplications = [];
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
+};
+```
