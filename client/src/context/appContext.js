@@ -362,6 +362,7 @@ const AppProvider = (props) => {
       });
     } catch (error) {
       console.log(error.response);
+      logoutUser();
     }
     clearAlert();
   };

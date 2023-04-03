@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppContext } from "../context/appContext";
-import StatsItem from "./StatsItem";
+import StatItem from "./StatItem";
 import { FaSuitcaseRolling, FaCalendarCheck, FaBug } from "react-icons/fa";
 import Wrapper from "../assets/wrappers/StatsContainer";
 
@@ -32,7 +32,7 @@ const StatsContainer = () => {
   return (
     <Wrapper>
       {defaultStats.map((item, index) => {
-        return <StatsItem key={index} {...item} />;
+        return <StatItem key={index} {...item} />;
       })}
     </Wrapper>
   );
