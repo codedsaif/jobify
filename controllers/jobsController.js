@@ -29,7 +29,18 @@ const deleteJob = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Success! Job removed" });
 };
 const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId });
+  const { search, status, jobType, sort } = req.query;
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+  if (status !== "all") {
+    queryObject.status = status;
+  }
+  if (jobType !== "all") {
+    queryObject.jobType = jobType;
+  }
+  let result = Job.find(queryObject);
+  const jobs = await result;
   res
     .status(StatusCodes.OK)
     .json({ jobs, totalJobs: jobs.length, noOfPages: 1 });
