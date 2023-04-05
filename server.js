@@ -4,6 +4,10 @@ const app = express();
 import dotenv from "dotenv";
 dotenv.config();
 
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
+
 import "express-async-errors";
 import morgan from "morgan";
 
@@ -21,6 +25,10 @@ import authenticateUser from "./middleware/auth.js";
 
 if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
 // app.use(cors());
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -33,6 +41,10 @@ app.get("/api/v1", (req, res) => {
 });
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
+
+app.get("*", (request, response) => {
+  response.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

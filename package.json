@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server --ignore client",
-    "client": "npm start --prefix client",
+    "build-client": "cd client && npm run build",
+    "server": "nodemon server.js --ignore client",
+    "client": "cd client && npm run start --prefix client",
     "start": "concurrently --kill-others-on-fail \"npm run server \" \"npm run client \""
   },
   "repository": {
