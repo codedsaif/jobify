@@ -33,6 +33,7 @@ import {
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
+  CHANGE_PAGE,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -79,8 +80,8 @@ const AppProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // getJobs
   const getJobs = async () => {
-    const { search, searchStatus, searchType, sort } = state;
-    let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
+    const { page, search, searchStatus, searchType, sort } = state;
+    let url = `/jobs?page=${page}&status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
     if (search) {
       url = url + `&search=${search}`;
     }
@@ -382,6 +383,12 @@ const AppProvider = (props) => {
   const clearFilters = () => {
     dispatch({ type: CLEAR_FILTERS });
   };
+
+  //page change
+  const changePage = (page) => {
+    dispatch({ type: CHANGE_PAGE, payload: { page } });
+  };
+
   // useEffect(() => {
   // getJobs();
   // }, []);
@@ -403,6 +410,7 @@ const AppProvider = (props) => {
         editJob,
         showStats,
         clearFilters,
+        changePage,
       }}
     >
       {props.children}
