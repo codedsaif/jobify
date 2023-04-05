@@ -4707,3 +4707,12 @@ if (action.type === HANDLE_CHANGE) {
   return { ...state, page: 1, [action.payload.name]: action.payload.value };
 }
 ```
+
+#### Production Setup - Fix Warnings and logoutUser
+
+- getJobs,deleteJob,showStats - invoke logoutUser()
+- fix warnings
+
+```sh
+// eslint-disable-next-line
+```

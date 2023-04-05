@@ -22,17 +22,13 @@ const Register = () => {
     }));
   };
   const handleChange = (e) => {
-    // console.log(e.target.value);
     setValues((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    // setValues({ ...values, [e.target.name]: e.target.value });
-    // console.log(values);
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    // console.log(e.target);
     const { name, email, password, isMember } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
@@ -40,22 +36,18 @@ const Register = () => {
     }
     const currentUser = { name, email, password };
     if (isMember) {
-      // console.log("already a member");
-      // loginUser(currentUser);
       setupUser({
         currentUser,
         endPoint: "login",
         alertText: "Login Successful! Redirecting...",
       });
     } else {
-      // registerUser(currentUser);
       setupUser({
         currentUser,
         endPoint: "register",
         alertText: "User Created! Redirecting...",
       });
     }
-    // console.log(values);
   };
 
   useEffect(() => {
@@ -78,6 +70,7 @@ const Register = () => {
             name="name"
             value={values.name}
             handleChange={handleChange}
+            placeholder="test"
           />
         )}
         <FormRow
@@ -85,25 +78,16 @@ const Register = () => {
           name="email"
           value={values.email}
           handleChange={handleChange}
+          placeholder="test@gmail.com"
         />
         <FormRow
           type="password"
           name="password"
           value={values.password}
           handleChange={handleChange}
+          placeholder="testSecret@"
         />
-        {/* <div className="form-row">
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
-            type="email"
-            value={values.email}
-            name="email"
-            onChange={handleChange}
-            className="form-input"
-          />
-        </div> */}
+        
         <button type="submit" className="btn btn-block" disabled={isLoading}>
           Submit
         </button>
