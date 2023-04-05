@@ -32,6 +32,7 @@ import {
   EDIT_JOB_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
+  CLEAR_FILTERS,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -64,6 +65,12 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
+  //search func
+  search: "",
+  searchStatus: "all",
+  searchType: "all",
+  sort: "latest",
+  sortOptions: ["latest", "oldest", "a-z", "z-a"],
 };
 
 const AppContext = React.createContext();
@@ -72,7 +79,11 @@ const AppProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // getJobs
   const getJobs = async () => {
-    let url = `/jobs`;
+    const { search, searchStatus, searchType, sort } = state;
+    let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
+    if (search) {
+      url = url + `&search=${search}`;
+    }
     dispatch({
       type: GET_JOBS_BEGIN,
     });
@@ -366,6 +377,11 @@ const AppProvider = (props) => {
     }
     clearAlert();
   };
+
+  //search func
+  const clearFilters = () => {
+    dispatch({ type: CLEAR_FILTERS });
+  };
   // useEffect(() => {
   // getJobs();
   // }, []);
@@ -386,6 +402,7 @@ const AppProvider = (props) => {
         deleteJob,
         editJob,
         showStats,
+        clearFilters,
       }}
     >
       {props.children}
