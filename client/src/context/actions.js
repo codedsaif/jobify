@@ -40,6 +40,7 @@ export const EDIT_JOB_ERROR = "EDIT_JOB_ERROR";
 
 // delete job
 export const DELETE_JOB_BEGIN = "DELETE_JOB_BEGIN";
+export const DELETE_JOB_ERROR = "DELETE_JOB_ERROR";
 
 // stats actions
 export const SHOW_STATS_BEGIN = "SHOW_STATS_BEGIN";
