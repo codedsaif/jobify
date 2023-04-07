@@ -192,7 +192,6 @@ const AppProvider = (props) => {
   };
   // Update User
   const updateUser = async (currentUser) => {
-    console.log(currentUser);
     dispatch({ type: UPDATE_USER_BEGIN });
     try {
       const { data } = await authFetch.patch("/auth/updateUser", currentUser);
@@ -332,6 +331,7 @@ const AppProvider = (props) => {
 
   useEffect(() => {
     getCurrentUser();
+    // eslint-disable-next-line
   }, []);
   return (
     <AppContext.Provider
