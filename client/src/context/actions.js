@@ -51,3 +51,7 @@ export const CLEAR_FILTERS = "CLEAR_FILTERS";
 
 // page Change
 export const CHANGE_PAGE = "CHANGE_PAGE";
+
+// get user
+export const GET_CURRENT_USER_BEGIN = "GET_CURRENT_USER_BEGIN";
+export const GET_CURRENT_USER_SUCCESS = "GET_CURRENT_USER_SUCCESS";

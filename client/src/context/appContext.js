@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from "react";
+import React, { useReducer, useContext, useEffect } from "react";
 import reducer from "./reducer";
 import axios from "axios";
 import {
@@ -29,9 +29,12 @@ import {
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
+  GET_CURRENT_USER_BEGIN,
+  GET_CURRENT_USER_SUCCESS,
 } from "./actions";
 
 const initialState = {
+  userLoading: true,
   isLoading: false,
   showAlert: false,
   alertText: "",
@@ -68,6 +71,21 @@ const AppContext = React.createContext();
 
 const AppProvider = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  const getCurrentUser = async () => {
+    dispatch({ type: GET_CURRENT_USER_BEGIN });
+    try {
+      const { data } = await authFetch("/auth/getCurrentUser");
+      const { user, location } = data;
+      dispatch({
+        type: GET_CURRENT_USER_SUCCESS,
+        payload: { user, location },
+      });
+    } catch (error) {
+      if (error.response.status === 401) return;
+      logoutUser();
+    }
+  };
   // getJobs
   const getJobs = async () => {
     const { page, search, searchStatus, searchType, sort } = state;
@@ -163,7 +181,8 @@ const AppProvider = (props) => {
     clearAlert();
   };
   // Logout User
-  const logoutUser = () => {
+  const logoutUser = async () => {
+    await authFetch.get("/auth/logout");
     dispatch({ type: LOGOUT_USER });
   };
 
@@ -311,6 +330,9 @@ const AppProvider = (props) => {
     dispatch({ type: CHANGE_PAGE, payload: { page } });
   };
 
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
   return (
     <AppContext.Provider
       value={{
