@@ -5098,3 +5098,52 @@ res.status(StatusCodes.OK).json({ user, location: user.location });
 ```
 
 - test the APP
+
+#### FRONT-END Remove Token from CONTEXT
+
+- PLEASE BE CAREFUL WHEN MAKING THESE UPDATES
+  client/context/appContext
+
+- remove
+
+```js
+const token = localStorage.getItem("token");
+const user = localStorage.getItem("user");
+const userLocation = localStorage.getItem("location");
+```
+
+- fix initial state
+
+```js
+const initialState = {
+  // remove token all together
+  user: null,
+  userLocation: "",
+  jobLocation: "",
+};
+```
+
+- remove request interceptor
+
+```js
+authFetch.interceptors.request.use(
+  (config) => {
+    config.headers.common["Authorization"] = `Bearer ${state.token}`;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+```
+
+- remove both addToLocalStorage and removeFromLocalStorage functions
+- remove from setupUser and updateUser (token and local storage functions)
+- remove from the reducer token (COMMAND + F)
+
+```js
+const logoutUser = async () => {
+  dispatch({ type: LOGOUT_USER });
+  // remove local storage code
+};
+```
