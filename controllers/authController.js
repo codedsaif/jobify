@@ -5,6 +5,7 @@ import {
   NotFoundError,
   UnauthenticatedError,
 } from "../errors/index.js";
+import attachCookies from "../utils/attachCookies.js";
 
 const register = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -17,6 +18,7 @@ const register = async (req, res, next) => {
   }
   const user = await User.create({ name, email, password });
   const token = user.createJWT();
+  attachCookies({ res, token });
   res.status(StatusCodes.CREATED).json({
     user: {
       email: user.email,
@@ -24,7 +26,6 @@ const register = async (req, res, next) => {
       location: user.location,
       name: user.name,
     },
-    token,
     location: user.location,
   });
 };
@@ -43,8 +44,9 @@ const login = async (req, res) => {
     throw new UnauthenticatedError("Invalid Credentials");
   }
   const token = user.createJWT();
+  attachCookies({ res, token });
   user.password = undefined;
-  res.status(StatusCodes.OK).json({ user, token, location: user.location });
+  res.status(StatusCodes.OK).json({ user, location: user.location });
 
   res.send("login user");
 };
@@ -63,9 +65,9 @@ const updateUser = async (req, res) => {
   await user.save();
 
   const token = user.createJWT();
+  attachCookies({ res, token });
   res.status(StatusCodes.OK).json({
     user,
-    token,
     location: user.location,
   });
 };

@@ -4995,3 +4995,106 @@ router.route("/updateUser").patch(authenticateUser, testUser, updateUser);
 
 export default router;
 ```
+
+#### Store JWT in Cookie
+
+- BE PREPARED TO REFACTOR CODE !!!
+- PLEASE DON'T RUSH THROUGH THESES VIDEOS
+- CHECK FEW TIMES BEFORE REMOVING/ADDING CODE
+
+#### Attach Cookies to Login response
+
+controllers/authController.js
+
+```js
+// login controller
+
+const token = user.createJWT();
+
+const oneDay = 1000 * 60 * 60 * 24;
+
+res.cookie("token", token, {
+  httpOnly: true,
+  expires: new Date(Date.now() + oneDay),
+  secure: process.env.NODE_ENV === "production",
+});
+```
+
+#### Setup Function in Utils
+
+- create attachCookies.js
+
+```js
+const attachCookie = ({ res, token }) => {
+  const oneDay = 1000 * 60 * 60 * 24;
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + oneDay),
+    secure: process.env.NODE_ENV === "production",
+  });
+};
+
+export default attachCookie;
+```
+
+- import in authController.js
+- invoke in register/login/updateUser
+
+```js
+import attachCookie from "../utils/attachCookie.js";
+
+attachCookie({ res, token });
+```
+
+#### Parse Cookie Coming Back from the Front-End
+
+- install cookie-parser (server)
+
+```sh
+npm install cookie-parser
+```
+
+server.js
+
+```js
+import cookieParser from "cookie-parser";
+
+app.use(express.json());
+app.use(cookieParser());
+```
+
+middleware/auth.js
+
+```js
+const auth = async (req, res, next) => {
+  console.log(req.cookies)
+  ....
+}
+```
+
+#### Refactor Auth Middleware
+
+middleware/auth.js
+
+```js
+const auth = async (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    throw new UnAuthenticatedError("Authentication Invalid");
+  }
+  // rest of the code
+};
+```
+
+#### SERVER - Remove Token from JSON Response
+
+controllers/authController
+
+register/login/updateUser
+
+```js
+res.status(StatusCodes.OK).json({ user, location: user.location });
+```
+
+- test the APP
